@@ -425,32 +425,3 @@ test('onExtract', async () => {
   expect(await result.jsCode()).toMatchSnapshot()
   expect(await result.hasCssFile()).toBe(false)
 })
-
-test('augmentChunkHash', async () => {
-  const outDir = fixture('dist', 'augmentChunkHash')
-  const cssFiles = ['simple/foo.css', 'simple/foo.css', 'simple/bar.css']
-
-  const outputFiles = []
-  /* eslint-disable no-await-in-loop */
-  for (const file of cssFiles) {
-    const newBundle = await rollup({
-      input: fixture(file),
-      plugins: [postcss({ extract: true })]
-    })
-    const entryFileName = file.split('.')[0]
-    const { output } = await newBundle.write({
-      dir: outDir,
-      entryFileNames: `${entryFileName}.[hash].css`
-    })
-    outputFiles.push(output[0])
-  }
-
-  const [fooOne, fooTwo, barOne] = outputFiles
-
-  const fooHash = fooOne.fileName.split('.')[1]
-  expect(fooHash).toBeTruthy() // Verify that [hash] part of `foo.[hash].css` is truthy
-  expect(fooOne.fileName).toEqual(fooTwo.fileName) // Verify that the foo hashes to the same fileName
-
-  const barHash = barOne.fileName.split('.')[1]
-  expect(barHash).not.toEqual(fooHash) // Verify that foo and bar does not hash to the same
-})

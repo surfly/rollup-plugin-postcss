@@ -138,16 +138,6 @@ export default (options = {}) => {
       }
     },
 
-    augmentChunkHash() {
-      if (extracted.size === 0) return
-      // eslint-disable-next-line unicorn/no-reduce
-      const extractedValue = [...extracted].reduce((object, [key, value]) => ({
-        ...object,
-        [key]: value
-      }), {})
-      return JSON.stringify(extractedValue)
-    },
-
     async generateBundle(options_, bundle) {
       if (
         extracted.size === 0 ||
